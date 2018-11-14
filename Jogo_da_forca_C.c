@@ -20,9 +20,7 @@ typedef struct cad_plvr{
 int topo, topo_plvr; //variaveis de controle, indicam quantos cadastros ja foram realizados
 void menu();
 void cadastrar();
-void excluir();
 void listar();
-void pesquisar();
 void cad_palavra();
 //void listar_palavras();
 
@@ -62,7 +60,7 @@ void menu(){
         }
         
         else{
-          //excluir();
+          
           printf("Cadastro excluido com sucesso.\n\n");
         }
         break;
