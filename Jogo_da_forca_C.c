@@ -12,9 +12,9 @@ struct cadastro{
 }player[MAX];
 
 typedef struct cad_plvr{
-  char nivel; //nivel de dificuldade das palavras
-  char categoria; 
-  char palavra;
+  char nivel[15]; //nivel de dificuldade das palavras
+  char categoria[20]; 
+  char palavra[50];
 }nv_palavra;
 
 int topo, topo_plvr; //variaveis de controle, indicam quantos cadastros ja foram realizados
@@ -27,9 +27,11 @@ void cad_palavra();
 //void listar_palavras();
 
 int main(){
+  topo = 0;
   menu();
   return 0;
 }
+
 void menu(){
   int n = 1;
     
@@ -37,89 +39,95 @@ void menu(){
     printf("Bem-vindo ao Jogo da Forca em C!\nO que deseja fazer?\n\n1 - Cadastro\n2 - Excluir cadastro\n3 - Ranking\n5 - Cadastrar palavras\n0 - Sair\n");
     scanf("%d", &n);
     
-    switch(n) {
+    switch(n){
       case 0:
         return;
+        
       case 1:{
         printf("Novo jogador\n\n");
-               if(topo < MAX){
-                 cadastrar();
-               }
-               else
-               {
-                 printf("Desculpe, sitema de cadastro esta no limite.\n\n");
-               }
-               break;
-             }
+
+        if(topo < MAX){
+          cadastrar();
+        }
+
+        else{
+          printf("Desculpe, sitema de cadastro esta no limite.\n\n");
+        }
+        break;
+      }
                
-        case 2:
-             {
-               if(topo == 0)
-               {
-                 printf("Não há dados para serem excluidos.\n\n");
-               }
-               else
-               {
-                 excluir();
-                 printf("Cadastro excluido com sucesso.\n\n");
-               }
-               break;
-             }
-        case 3:
-             {
-               if(topo == 0)
-               {
-                 printf("Não há dados no sistema!\n\n");
-               }
-               else
-               {
-                 printf("Listando os jogadores cadastrados\n\n");
-                 listar();
-               }
-               break;
-             }
-        case 4:
-        case 5:
-          cad_palavra();
-          break;
-        default:
-               printf("Opcao invalida!\n\n");
-                                     
+      case 2:{
+        if(topo == 0){
+          printf("Não há dados para serem excluidos.\n\n");
+        }
+        
+        else{
+          //excluir();
+          printf("Cadastro excluido com sucesso.\n\n");
+        }
+        break;
       }
+        
+      case 3:{
+        /*if(topo == 0){
+          printf("Não há dados no sistema!\n\n");
+          }
+          
+          else{
+            printf("Listando os jogadores cadastrados\n\n");*/
+            listar();
+          //}
+         break;
       }
+      
+      case 4:
+
+      case 5:{
+        cad_palavra();
+        break;
+      }
+
+      default:
+        printf("Opcao invalida!\n\n");                       
+    }
+  }
 
 }
 
 //Cadastrar jogadores
 void cadastrar(){
   FILE* cadastros;
-  struct cadastro update;
+  char nick[25];
 
-  cadastros = fopen("ranking.bin", "ab");
+  cadastros = fopen("ranking.txt", "a");
   
-  if(cadastros == NULL){
+  if(!cadastros){
     printf("Não foi possivel acessar o banco para realizar o cadastro.\n\n");
+    return;
   }
 
   else{
-    player[topo].cod = topo + 1;
-    printf("Informe seu nick: ");
-    scanf("%s", player[topo].nick);
-    player[topo].score = 0;
+    player[topo].cod = (topo + 1);
 
+    do{
+      printf("Informe seu nick(máximo 25 caracteres): ");
+      scanf("%s", nick);
+    }while(strlen(nick) > 25);
+    
+    player[topo].score = 0;
+    
     printf("\nCadastro efetuado com sucesso!\n\nSeu codigo é: %d\n\n", player[topo].cod);
 
     topo = topo + 1;
 
-    fwrite(&player[topo], sizeof(player[topo]), 10, cadastros);
+    fprintf(cadastros, "%d", player[topo].cod);
+    fprintf(cadastros, "%c", '-');
+    fprintf(cadastros, "%s", nick);
+    fprintf(cadastros, "%c", '-');
+    fprintf(cadastros, "%d", player[topo].score);
+    fprintf(cadastros, "%c", '\n');
   }
   fclose(cadastros);
-}
-
-//Excluir jogadores(Só o ultimo :v)
-void excluir(){
-  topo  = topo - 1;
-
 }
 
 //Listar todos os jogadores
@@ -127,77 +135,51 @@ void excluir(){
 void listar(){
   FILE *rkg;
   int i, resultado;
-  rkg = fopen("rankig.bin", "rb");
+  char players[10];
+
+  rkg = fopen("ranking.txt", "r");
 
   if(!rkg){
   printf("Não foi possível acessar o arquivo com o ranking.");
+  return;
   }
 
-  for(i = 0; i <= topo; i++){
-    resultado = fread(&player[MAX], sizeof(topo), 10, rkg);
-    printf("Nick: %s\nScore: %d", player[i].nick, player[i].score);
-  }
+  while(fgets(players, 10, rkg) != NULL)
+  printf("%s", players);
+  
   fclose(rkg);
+
+  printf("\n \n");
 }
 
-/*pesquisar jogadores pelo codigo
-void pesquisar(){
-  int i, dado, cont = 0;
-  
-  printf("Pesquisa por codigo: ");
-  scanf("%d",&dado);
-  for(i = 0; i < topo; i++){
-
-    if(dado == player[i].cod){
-      printf("Cadastro encontrado\n\nCodigo: %d\nNick: %s\nScore: %d\n\n",player[i].cod, player[i].nick, player[i].score);
-      cont = cont + 1;
-    }
-  }
-
-  if(cont == 0){
-    printf("Cadastro não encontrado!\n\n");
-  }
-}*/
 
 //Cadastrar novas palavras
 void cad_palavra(){
   int op;
-  FILE* palavras;
+  FILE* palavras = NULL;
   nv_palavra inp_plvr[50], cat;
   
 
-  palavras = fopen("palavras.bin", "ab");
+  palavras = fopen("palavras.txt", "a+");
 
-  if(palavras == NULL){
+  if(!palavras){
     printf("Não foi possivel acessar o banco de palavras.");
   }
+
   else{
+
     do{
       printf("Informe a palavra que deseja adicionar ao banco de palavras: ");
-      scanf("%s", &inp_plvr[topo_plvr].palavra);
+      scanf("%s", &inp_plvr[topo_plvr].palavra[50]);
 
-      //******FAZER UMA FUNÇÃO PARA CHECAR E ARMAZENAR AS PALAVRAS POR CATEGORIA/DIFICULDADE***********
-
-      /*if(strlen(&inp_plvr.palavra) <= 6){
-        inp_plvr.nivel = '1';
-      }
-      else if(strlen(&inp_plvr.palavra) > 4 && strlen(&inp_plvr.palavra) <= 8){
-        inp_plvr.nivel = '2';
-      }
-      else{
-        inp_plvr.nivel = '3';
-      }
-      
-      inp_plvr.nivel = '1';
-      inp_plvr.categoria = '8';*/
-      fwrite(&inp_plvr, sizeof(nv_palavra), 1, palavras);
+      fprintf(palavras, "%s", &inp_plvr[topo_plvr].palavra[50]);
+      fprintf(palavras, "%c", '\n');
 
       printf("Deseja adicionar mais palavras?\n\n1 - Sim\n2 - Nao\n");
       scanf("%d", &op);
     
-    }while(op == 1);
+    } while(op == 1);
     fclose(palavras);
   }
   topo_plvr += 1;
-  printf("%d° palavra", topo_plvr);
 }
