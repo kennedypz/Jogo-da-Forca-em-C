@@ -4,7 +4,6 @@
 #define MAX 10
 
 /* Estrutra para armazenar a ficha do jogador*/
-
 struct cadastro{
   short int cod; //Código do jogador
   char nick[25]; //Nick do funcionario 
@@ -22,7 +21,7 @@ void menu();
 void cadastrar();
 void listar();
 void cad_palavra();
-//void listar_palavras();
+void boneco(int x);
 
 int main(){
   topo = 0;
@@ -157,7 +156,6 @@ void cad_palavra(){
   FILE* palavras = NULL;
   nv_palavra inp_plvr[50], cat;
   
-
   palavras = fopen("palavras.txt", "a+");
 
   if(!palavras){
@@ -165,7 +163,6 @@ void cad_palavra(){
   }
 
   else{
-
     do{
       printf("Informe a palavra que deseja adicionar ao banco de palavras: ");
       scanf("%s", &inp_plvr[topo_plvr].palavra[50]);
@@ -180,4 +177,87 @@ void cad_palavra(){
     fclose(palavras);
   }
   topo_plvr += 1;
+}
+
+void boneco(int x){
+  switch(x){
+    case 0:{
+      printf("       ____      \n ");
+      printf("     / ô ô\\ \n");     
+      printf("     (   u  )\n");     
+      printf("      \\____/  \n");               
+      printf("    /\\  ._. /\\  \n");   
+      printf("   / /  | | \\ \\   \n") ;
+      printf("  / /   |_|  \\ \\  \n");
+      printf(" / /    |-|   \\ \\  \n");
+      printf("/ /     | |    \\ \\ \n");
+      printf("\\/      |_|     \\/ \n");
+      printf("    /\\      /\\   \n");
+      printf("   / /      \\ \\   \n");
+      printf("  / /        \\ \\  \n");
+      printf(" / /          \\ \\ \n");
+      printf("/ /            \\ \\ \n");
+      printf("\\/              \\/ \n");
+    }
+    case 1:{
+      printf("       ____      \n ");
+      printf("     / ô ô\\ \n");     
+      printf("     (   u  )\n");     
+      printf("      \\____/  \n");               
+      printf("    /\\  ._. /\\  \n");   
+      printf("   / /  | | \\ \\   \n") ;
+      printf("  / /   |_|  \\ \\  \n");
+      printf(" / /    |-|   \\ \\  \n");
+      printf("/ /     | |    \\ \\ \n");
+      printf("\\/      |_|     \\/ \n");
+      printf("    /\\        \n");
+      printf("   / /         \n");
+      printf("  / /          \n");
+      printf(" / /           \n");
+      printf("/ /             \n");
+      printf("\\/               \n");
+    }
+    case 2:{
+      printf("       ____      \n ");
+      printf("     / ô ô\\ \n");     
+      printf("     (   u  )\n");     
+      printf("      \\____/  \n");               
+      printf("    /\\  ._. /\\  \n");   
+      printf("   / /  | | \\ \\   \n") ;
+      printf("  / /   |_|  \\ \\  \n");
+      printf(" / /    |-|   \\ \\  \n");
+      printf("/ /     | |    \\ \\ \n");
+      printf("\\/      |_|     \\/ \n");
+    }
+    case 3:{
+      printf("       ____      \n ");
+      printf("     / ô ô\\ \n");     
+      printf("     (   u  )\n");     
+      printf("      \\____/  \n");               
+      printf("    /\\  ._.   \n");   
+      printf("   / /  | |    \n") ;
+      printf("  / /   |_|    \n");
+      printf(" / /    |-|     \n");
+      printf("/ /     | |     \n");
+      printf("\\/      |_|      \n");
+    }
+    case 4:{
+      printf("       ____      \n ");
+      printf("     / ô ô\\ \n");     
+      printf("     (   u  )\n");     
+      printf("      \\____/  \n");               
+      printf("      ._.   \n");   
+      printf("     | |    \n") ;
+      printf("     |_|    \n");
+      printf("     |-|     \n");
+      printf("     | |     \n");
+      printf("      |_|      \n");
+    }
+    case 5:{
+      printf("       ____      \n ");
+      printf("     / x x\\ \n");     
+      printf("     (   n  )\n");     
+      printf("      \\____/  \n");    
+    }
+  }
 }
