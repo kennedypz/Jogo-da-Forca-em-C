@@ -393,7 +393,7 @@ void jogar(char *palavra){
       else{
         erros++;
         //printf("A letra '%c' não faz parte da palavra secreta.\n", letras_tentadas[tentativas]);
-        printf("_ ");
+        //printf("_ ");
       }
     }
 
