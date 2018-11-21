@@ -363,16 +363,15 @@ void jogar(char *palavra){
     printf("\n\nDigite uma letra: ");
     scanf(" %c", &letras_tentadas[tentativas]);
 
-    //***PROBLEMA******
     //impede que o jogador tente a mesma letra duas vezes.
-    /*if(tentativas > 0){
+    if(tentativas > 0){
       for(i = 0; i <= tentativas; i++){
-        if(letras_tentadas[i] == letras_tentadas[tentativas]){
+        if(letras_tentadas[i - 1] == letras_tentadas[tentativas]){
           printf("Você já tentou a letra %c. Por favor, tente uma letra diferente.\n", letras_tentadas[tentativas]);
           goto voltar;
         }
       }
-    }*/
+    }
     //Confere se foi inserido apenas um caractere
     if(letras_tentadas[tentativas + 1] != '1'){
       printf("Por favor, digite uma letra de cada vez.\n\n");
