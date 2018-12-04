@@ -4,7 +4,6 @@
 #include <string.h>
 #include <time.h>
 #include <ctype.h> //função tolower
-#define MAX 10
 
 /* Estrutra para armazenar a ficha do jogador*/
 typedef struct cadastro{
@@ -28,18 +27,20 @@ void jogar(char *palavra);
 void cadastrar();
 player *lista();
 void cad_palavra(char* palavra, int x);
-void boneco(int x);
+void boneco(int x, int y);
 void creditos();
 void login(player * lista, char * nicklog);
 void verificanick(player * lista, char * nicklog);
 int verificaplayer2(player * lista, char * nicklog);
 void verificapalavra(char *palavra);
-void trofeu();
+void trofeu(char *winner);
 void aumentascore(player * lista, char * nick, int score);
 void salvaRanking(player * lista);
+void ranking(player *lista);
+player * liberaMemoriaUltimoElementoLista(player* lista);
+void liberaMemoria(player * lista);
 
 int main(){
-  escolhepalavra();
   menu();
   return 0;
 }
@@ -100,11 +101,13 @@ void menu(){
           }
         }while(strlen(nick) > 25);
         login(lista1, nick);
+        liberaMemoria(lista1);
         break;
       }
         
       case 3:{
-        lista();
+        ranking(lista1);
+        liberaMemoria(lista1);
         break;
       }
       
@@ -157,7 +160,7 @@ void cadastrar(){
     printf("\nCadastro efetuado com sucesso!\n\n");
 
     fprintf(cadastros, "%s", nick);
-    fprintf(cadastros, "%c", ':');
+    fprintf(cadastros, "%c", ',');
     fprintf(cadastros, "%d", score.score);
     fprintf(cadastros, "%c", '\n');
   }
@@ -165,6 +168,7 @@ void cadastrar(){
   for(i = 0; i < strlen(nick); i++){
     nick1[i] = nick[i];
   }
+  liberaMemoria(lista2);
   menu2(nick);
 }
 
@@ -236,23 +240,30 @@ void cad_palavra(char *palavra, int x){
   palavras = fopen("palavras.txt", "a+");
 
   if(!palavras){
-    printf("Não foi possivel acessar o banco de palavras.5");
+    printf("Não foi possível acessar o banco de palavras.5");
   }
 
   else{
     do{
-      fprintf(palavras, "%s", palavra);
-      fprintf(palavras, "%c", '\n');
       if(x == 1){
+        printf("Informe a palavra que deseja adicionar ao banco de palavras: ");
+        scanf(" %[^\t\n]s", palavra);
+        fprintf(palavras, "%s", palavra);
+        fprintf(palavras, "%c", '\n');
+    
         printf("Deseja adicionar mais palavras?\n\n1 - Sim\n2 - Nao\n");
         scanf("%d", &op);
+      }
+      else{
+        fprintf(palavras, "%s", palavra);
+        fprintf(palavras, "%c", '\n');
       }
     } while(op == 1);
     fclose(palavras);
   }
 }
 
-void boneco(int x){
+void boneco(int x, int y){
   int i;
   printf("\n");
   switch(x){
@@ -339,34 +350,41 @@ void boneco(int x){
       printf("     (   n  )\n");     
       printf("      \\____/  \n\n");
 
-      printf("++++++++++++++++++++++++++++++++++++\n");
-      printf("¦¦¦¯¯¯¦¦+¦¦¦¯¯¯¦¦¦+¦¦¦¯¦_¦¯¦¦¦+¦¦¯¯¯\n");
-      printf("¦¦++++¦¦+¦¦+++++¦¦+¦¦+++¦+++¦¦+¦¦+++\n");
-      printf("¦¦+++___+¦¦_____¦¦+¦¦+++¯+++¦¦+¦¦¯¯¯\n");
-      printf("¦¦++++¦¦+¦¦+++++¦¦+¦¦+++++++¦¦+¦¦+++\n");
-      printf("¦¦¦___¦¦+¦¦+++++¦¦+¦¦+++++++¦¦+¦¦___\n");
-      printf("++++++++++++++++++++++++++++++++++++\n");
-      printf("¦¦¦¯¯¯¦¦¦+¯¦¦¦++¦¦¯+¦¦¯¯¯+¦¦¯¯¯¯¦¦_+\n");
-      printf("¦¦+++++¦¦+++¦¦++¦¦++¦¦++++¦¦+++++¦¦+\n");
-      printf("¦¦+++++¦¦+++¦¦++¦¦++¦¦¯¯¯+¦¦_____¯¯+\n");
-      printf("¦¦+++++¦¦+++¦¦++¦¯++¦¦++++¦¦+++++¦¦+\n");
-      printf("¦¦¦___¦¦¦+++-¯¦¯++-+¦¦___+¦¦+++++¦¦_\n");
-      printf("++++++++++++++++++++++++++++++++++++\n");
-      printf("++++++++¦¦+++++++++++++++¦¦+++++++++\n");
-      printf("++++++¦¦¦¦_+++_______+++_¦¦¦¦+++++++\n");
-      printf("+++++++++¯¯¦_¦¦¦¦¦¦¦¦¦_¦¯¯++++++++++\n");
-      printf("+++++++++++¦¦¦¦¦¦¦¦¦¦¦¦¦++++++++++++\n");
-      printf("+++++++++++¦¦¯¯¯¦¦¦¯¯¯¦¦++++++++++++\n");
-      printf("+++++++++++¦¦+++¦¦¦+++¦¦++++++++++++\n");
-      printf("+++++++++++¦¦¦¦¦¯_¯¦¦¦¦¦++++++++++++\n");
-      printf("++++++++++++¦¦¦¦¦¦¦¦¦¦¦+++++++++++++\n");
-      printf("++++++++___¦¦++¦¯¦¯¦++¦¦___+++++++++\n");
-      printf("++++++++¯¯¦¦+++++++++++¦¦¯¯+++++++++\n");
-      printf("++++++++++¯¯+++++++++++¯¯+++++++++++\n");
-      printf("++++++++++++++++++++++++++++++++++++\n\n");
+      printf("┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n");
+      printf("███▀▀▀██┼███▀▀▀███┼███▀█▄█▀███┼██▀▀▀\n");
+      printf("██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼█┼┼┼██┼██┼┼┼\n");
+      printf("██┼┼┼▄▄▄┼██▄▄▄▄▄██┼██┼┼┼▀┼┼┼██┼██▀▀▀\n");
+      printf("██┼┼┼┼██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██┼┼┼\n");
+      printf("███▄▄▄██┼██┼┼┼┼┼██┼██┼┼┼┼┼┼┼██┼██▄▄▄\n");
+      printf("┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n");
+      printf("███▀▀▀███┼▀███┼┼██▀┼██▀▀▀┼██▀▀▀▀██▄┼\n");
+      printf("██┼┼┼┼┼██┼┼┼██┼┼██┼┼██┼┼┼┼██┼┼┼┼┼██┼\n");
+      printf("██┼┼┼┼┼██┼┼┼██┼┼██┼┼██▀▀▀┼██▄▄▄▄▄▀▀┼\n");
+      printf("██┼┼┼┼┼██┼┼┼██┼┼█▀┼┼██┼┼┼┼██┼┼┼┼┼██┼\n");
+      printf("███▄▄▄███┼┼┼─▀█▀┼┼─┼██▄▄▄┼██┼┼┼┼┼██▄\n");
+      printf("┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n");
+      printf("┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼██┼┼┼┼┼┼┼┼┼\n");
+      printf("┼┼┼┼┼┼████▄┼┼┼▄▄▄▄▄▄▄┼┼┼▄████┼┼┼┼┼┼┼\n");
+      printf("┼┼┼┼┼┼┼┼┼▀▀█▄█████████▄█▀▀┼┼┼┼┼┼┼┼┼┼\n");
+      printf("┼┼┼┼┼┼┼┼┼┼┼█████████████┼┼┼┼┼┼┼┼┼┼┼┼\n");
+      printf("┼┼┼┼┼┼┼┼┼┼┼██▀▀▀███▀▀▀██┼┼┼┼┼┼┼┼┼┼┼┼\n");
+      printf("┼┼┼┼┼┼┼┼┼┼┼██┼┼┼███┼┼┼██┼┼┼┼┼┼┼┼┼┼┼┼\n");
+      printf("┼┼┼┼┼┼┼┼┼┼┼█████▀▄▀█████┼┼┼┼┼┼┼┼┼┼┼┼\n");
+      printf("┼┼┼┼┼┼┼┼┼┼┼┼███████████┼┼┼┼┼┼┼┼┼┼┼┼┼\n");
+      printf("┼┼┼┼┼┼┼┼▄▄▄██┼┼█▀█▀█┼┼██▄▄▄┼┼┼┼┼┼┼┼┼\n");
+      printf("┼┼┼┼┼┼┼┼▀▀██┼┼┼┼┼┼┼┼┼┼┼██▀▀┼┼┼┼┼┼┼┼┼\n");
+      printf("┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼▀▀┼┼┼┼┼┼┼┼┼┼┼\n");
+      printf("┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼\n\n");
       printf("A palavra secreta era: ");
-      for(i = 0; i < strlen(random_word); i++){
-        printf("%c", random_word[i]);
+      if(y == 1){
+        for(i = 0; i < strlen(random_word); i++){
+          printf("%c", random_word[i]);
+        }
+      }
+      else{
+        for(i = 0; i < strlen(palavragm2); i++){
+          printf("%c", palavragm2[i]);
+        }
       }
       printf("\n\nPressione qualquer tecla para voltar ao menu\n\n");
       menu();
@@ -399,7 +417,7 @@ void escolhepalavra() {
 		fscanf(f, "%s", random_word);
 	}
   
-  printf("(linha 305) Quantidade de palavras: %d\npalavra 1: %s\n\n", qtddepalavras, random_word);
+  printf("(escolhepalavra) Quantidade de palavras: %d\npalavra 1: %s\n\n", qtddepalavras, random_word);
 
 	fclose(f);
 }
@@ -413,10 +431,12 @@ void jogar(char *palavra1){
   scanf(" %s", nick2);
   verificaplayer2(lista3, nick2);
 
-  printf("Como voces desejam jogar?\n\n1 - Ambos tentando adivinhar a mesma palavra\n2 - Um escolhe a palavra e o outro tenta adivinhar\n");
+  printf("Como vocês desejam jogar?\n\n1 - Ambos tentando adivinhar a mesma palavra\n2 - Um escolhe a palavra e o outro tenta adivinhar\n");
   scanf(" %c", &gamemode);
-  if(gamemode == '1'){
 
+  if(gamemode == '1'){
+  
+  escolhepalavra();
   //Esse for mede a quantidade de caracteres presentes na palavra a ser adivinhada
   for(t = 0; palavra1[t] != '\0'; t++){
     if(palavra1[t] == '-' || palavra1[t] == ' '){
@@ -455,7 +475,6 @@ void jogar(char *palavra1){
     else{
       printf("\nTurno do jogador: %s\n", nick2);
     }
-    //Letras tentadas
     voltar:
     printf("A palavra possui %d letras\n\n", (t - char_especial1));
 
@@ -480,11 +499,26 @@ void jogar(char *palavra1){
       scanf("%s", chute);
 
       if(strcmp(chute, palavra1) == 0){
-        acertou = 1;
+        if((turno % 2) == 0){
+          //trofeu(nick2);
+          int score = 1;
+          aumentascore(lista3, nick2, score);
+          salvaRanking(lista3);
+          acertou = 1;
+          break;
+        }
+        else{
+          //trofeu(nick1);
+          int score = 1;
+          aumentascore(lista3, nick1, score);
+          salvaRanking(lista3);
+          acertou = 1;
+          break;
+        }
       }
       else{
         erros = 5;
-        boneco(erros);
+        boneco(erros,1);
       }
     }
 
@@ -506,12 +540,14 @@ void jogar(char *palavra1){
     int controle = 0;
     
     for(i = 0; i < t; i++){
-      if(letras_tentadas1[tentativas] == palavra1[i]){
-        copia_randwrd[i] = letras_tentadas1[tentativas];
-        for(i = 0; i < t; i++){
-          printf("%c ", copia_randwrd[i]);
+      if(letras_tentadas1[tentativas] != '1'){
+        if(letras_tentadas1[tentativas] == palavra1[i]){
+          copia_randwrd[i] = letras_tentadas1[tentativas];
+          for(i = 0; i < t; i++){
+            printf("%c ", copia_randwrd[i]);
+          }
+          controle = 1;
         }
-        controle = 1;
       }
     }
 
@@ -531,28 +567,57 @@ void jogar(char *palavra1){
     }
 
     if((turno % 2) == 0){
-      boneco(erros);
+      boneco(erros,1);
     }
     else{
-      boneco(erros2);
+      boneco(erros2,1);
     }
-    turno++;
-    printf("copia: %s\nrandom_word: %s\nerros: %d \nturno: %d\npalavra1: %s\n\n", copia_randwrd, random_word, erros, turno, palavra1);
+    
+    //printf("copia: %s\nrandom_word: %s\nerros: %d \nturno: %d\npalavra1: %s\n\n", copia_randwrd, random_word, erros, turno, palavra1);
 
     tentativas++;
 
     if(strcmp(copia_randwrd, palavra1) == 0){
       acertou++;
+        if((turno % 2) == 0){
+        //trofeu(nick2);
+        int score = 1;
+        aumentascore(lista3, nick2, score);
+        salvaRanking(lista3);
+      }
+      else{
+        //trofeu(nick1);
+        int score = 1;
+        aumentascore(lista3, nick1, score);
+        salvaRanking(lista3);
+      }
     }
-    
+
+    if(acertou != 1){
+      turno++;
+    }
   }while(acertou == 0); 
   
   if(acertou == 1){
-    printf("Parabens, voce venceu!\n\n");
+    if((turno % 2) == 0){
+      trofeu(nick2);
+      int score = 1;
+      aumentascore(lista3, nick2, score);
+      salvaRanking(lista3);
+      menu2(nick1);
+    }
+    else{
+      trofeu(nick1);
+      int score = 1;
+      aumentascore(lista3, nick1, score);
+      salvaRanking(lista3);
+      menu2(nick1);
+    }
   }
+  liberaMemoria(lista3);
   }
   else if(gamemode == '2'){
-    printf("O jogador %s ira escolher uma palavra para o jogador %s tentar adivinhar.\n\nInforme a palavra: ", nick1, nick2);
+    printf("O jogador %s irá escolher uma palavra para o jogador %s tentar adivinhar.\n\nInforme a palavra: ", nick1, nick2);
     scanf("%s", palavragm2);
     verificapalavra(palavragm2);
 
@@ -610,11 +675,13 @@ void jogar(char *palavra1){
         scanf("%s", chute);
         if(strcmp(chute, palavragm2) == 0){
           acertou = 1;
+          break;
         }
         else{
           erros = 5;
-          boneco(erros);
+          boneco(erros,0);
         }
+        break;
       }
 
       //impede que o jogador tente a mesma letra duas vezes.
@@ -655,9 +722,9 @@ void jogar(char *palavra1){
         }
       }
       
-      boneco(erros);
+      boneco(erros,0);
       
-      printf("copia: %s\nrandom_word: %s\nerros: %d \nturno: %d\npalavragm2: %s\n\n", copia_randwrd, random_word, erros, turno, palavragm2);
+      //printf("copia: %s\nrandom_word: %s\nerros: %d \nturno: %d\npalavragm2: %s\n\n", copia_randwrd, random_word, erros, turno, palavragm2);
 
       tentativas++;
 
@@ -668,11 +735,12 @@ void jogar(char *palavra1){
     }while(acertou == 0); 
     
     if(acertou == 1){
-      trofeu();
+      trofeu(nick2);
       int score = 1;
       aumentascore(lista3, nick2, score);
       salvaRanking(lista3);
     }
+    liberaMemoria(lista3);
   }
 }
 
@@ -683,6 +751,7 @@ void creditos(){
 void menu2(char nick[25]){
   int n = 1;
   char palavrainpt[75];
+  player *listax = lista();
     
   while(n!=0) {
     printf("Bem-vindo, %s!\n\n1 - Jogar\n2 - Cadastrar palavras\n3 - Ranking\n4 - Creditos\n0 - Sair\n", nick);
@@ -714,14 +783,13 @@ void menu2(char nick[25]){
         printf("|         | |                                              |\n");   
         printf("|         |_|                                              |\n");
         printf("|__________________________________________________________|\n\n");
-        printf("Informe a palavra que deseja adicionar ao banco de palavras: ");
-        scanf(" %[^\t\n]s", palavrainpt);
         cad_palavra(palavrainpt, 1);
         break;
       }
         
       case 3:{
-        lista();
+        ranking(listax);
+        liberaMemoria(listax);
         break;
       }
       
@@ -760,6 +828,7 @@ void login(player * lista, char * nicklog){
   while(aux){
     if(strcmp(aux->nick, nicklog) == 0) {
       menu2(nicklog);
+      break;
     }
     else{
       cont++;
@@ -838,10 +907,10 @@ void verificapalavra(char *palavra){
   int i, cont = 0, qtddlinhas;
   char plvrs[75];
 
-  plv = fopen("ranking.txt", "r");
+  plv = fopen("palavras.txt", "r");
 
   if(!plv){
-  printf("Não foi possível acessar o arquivo com o ranking.1");
+  printf("Não foi possível acessar o arquivo com as palavras.1");
   return;
   }
 
@@ -857,8 +926,8 @@ void verificapalavra(char *palavra){
   fclose(plv);
 }
 
-void trofeu(){
-  printf("%s venceu!\n\n", nick2);
+void trofeu(char * winner){
+  printf("%s venceu!\n\n", winner);
   printf("       ___________      \n");
 		printf("      '._==_==_=_.'     \n");
 		printf("      .-\\:      /-.    \n");
@@ -870,6 +939,7 @@ void trofeu(){
 		printf("         _.' '._        \n");
 		printf("        '-------'       \n\n");
 }
+
 void aumentascore(player * lista, char * nick, int score){
   player * aux = lista;
 
@@ -893,4 +963,33 @@ void salvaRanking(player * lista){
 
   fclose(rkg);
 }
-//Falta fazer registrar o ranking
+
+void ranking(player *lista){
+  int i, j;
+  player * aux = lista;
+
+  printf("\nPos|    nick  -   score\n");
+  for(i = 0; aux; i++, aux = aux -> prox){
+    printf(" %d | %s - %d\n", (i + 1), aux->nick, aux->score);
+  }
+}
+
+player * liberaMemoriaUltimoElementoLista(player* lista){
+  player * anterior = lista;
+
+  while (anterior->prox->prox){ 
+    anterior = anterior->prox; 
+    //aux = aux->prox; //itera
+  }
+
+  free(anterior->prox);
+  anterior->prox = 0;
+  return lista;
+}
+
+void liberaMemoria(player * lista){
+  player * ultimo = lista;
+  while(ultimo->prox)
+  ultimo = liberaMemoriaUltimoElementoLista(lista);
+  free(lista);
+}
